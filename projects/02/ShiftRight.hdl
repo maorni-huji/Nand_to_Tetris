@@ -29,5 +29,6 @@ CHIP ShiftRight {
     OUT out[16];
      
     PARTS:
-    // Put your code here:
+    Or16(a[0..14]=in[1..15], a[15]=in[15], b=false, out=out[0..15]);
+
 }

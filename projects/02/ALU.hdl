@@ -50,4 +50,34 @@ CHIP ALU {
     // You only need to submit the "full" ALU, no need to submit the partial
     // implementation (ALU-nostat).
     // Put your code here:
+
+    // zx, nx
+    Mux16(a=x, b=false, sel=zx, out=Muxzx);
+    Not16(in=Muxzx, out=NotMuxzx);
+    Mux16(a=Muxzx, b=NotMuxzx, sel=nx, out=Muxnx);
+
+    // zy, ny
+    Mux16(a=y, b=false, sel=zy, out=Muxzy);
+    Not16(in=Muxzy, out=NotMuxzy);
+    Mux16(a=Muxzy, b=NotMuxzy, sel=ny, out=Muxny);
+
+    // f
+    Add16(a=Muxnx, b=Muxny, out=xAddy);
+    And16(a=Muxnx, b=Muxny, out=xAndy);
+    Mux16(a=xAndy, b=xAddy, sel=f, out=Muxf);
+
+    // no
+    Not16(in=Muxf, out=NotMuxf);
+    Mux16(a=Muxf, b=NotMuxf, sel=no, out=out, out[0..7]=finalFirstHalf, out[8..15]=finalSecondHalf, out[15]=finalIsNeg);
+
+    // nostat:
+
+    //zr
+    Or8Way(in=finalFirstHalf, out=zr0);
+    Or8Way(in=finalSecondHalf, out=zr1);
+    Or(a=zr0, b=zr1, out=isZero);
+    Mux(a=true, b=false, sel=isZero, out=zr);
+
+    // ng
+    Mux(a=false, b=true, sel=finalIsNeg, out=ng);
 }
